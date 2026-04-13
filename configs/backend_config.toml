@@ -1,0 +1,31 @@
+[reproducibility]
+seed = 42
+
+[sizes]
+n_qubits = 1
+d_hilbert_1q = 2
+d_hilbert_2q = 4
+
+[noise]
+p_depol = 0.09
+p_ampl_damp = 0.085
+p_phase_damp = 0.065
+d_theta = 0.087
+d_phi = 0.08
+d_delta = 0.075
+
+[spam]
+prep_err = 0.07
+meas_01_err = 0.05
+meas_10_err = 0.1
+
+[dtype]
+complex = "cdouble"
+real = "double"
+
+[io]
+artifacts_root = "results"
+run_name = "simulator"
+
+[data]
+default_shots = 5000
