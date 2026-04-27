@@ -31,9 +31,8 @@ def gate_to_symbol(gate: dict[str, Any]) -> int:
 
     raise ValueError(f"Unknown gate: {gate}")
 
-
 def load_circuits(
-    source: str | Path | list[dict[str, Any]] | dict[str, Any],
+    source: str | Path | list[Any] | dict[str, Any],
     default_shots: int,
 ) -> tuple[list[list[int]], list[int]]:
     if isinstance(source, Path):
@@ -49,19 +48,18 @@ def load_circuits(
     else:
         data = source
 
+    # -------------------------
     # Формат A:
     # [
     #   {"repetitions": 5000, "sequence": [gate_dict, ...]},
     #   ...
     # ]
-    if isinstance(data, list):
-        circuits = []
-        shots = []
+    # -------------------------
+    if isinstance(data, list) and all(isinstance(item, dict) for item in data):
+        circuits: list[list[int]] = []
+        shots: list[int] = []
 
         for i, item in enumerate(data):
-            if not isinstance(item, dict):
-                raise ValueError(f"Circuit #{i} must be a dict")
-
             raw_seq = item.get("sequence")
             reps = item.get("repetitions")
 
@@ -79,20 +77,42 @@ def load_circuits(
 
         return circuits, shots
 
+    # -------------------------
+    # Формат C:
+    # [[0,1,2], [4,0], ...]
+    # -------------------------
+    if isinstance(data, list) and all(isinstance(item, list) for item in data):
+        circuits: list[list[int]] = []
+
+        for i, seq in enumerate(data):
+            parsed: list[int] = []
+            for j, x in enumerate(seq):
+                if x not in (0, 1, 2, 3, 4):
+                    raise ValueError(
+                        f"Sequence #{i}, position #{j}: expected 0..4, got {x}"
+                    )
+                parsed.append(int(x))
+            circuits.append(parsed)
+
+        shots = [default_shots] * len(circuits)
+        return circuits, shots
+
+    # -------------------------
     # Формат B:
     # {"sequences": [[0,1,2], [4,0], ...]}
+    # -------------------------
     if isinstance(data, dict) and "sequences" in data:
         raw_sequences = data["sequences"]
 
         if not isinstance(raw_sequences, list):
             raise ValueError("'sequences' must be a list")
 
-        circuits = []
+        circuits: list[list[int]] = []
         for i, seq in enumerate(raw_sequences):
             if not isinstance(seq, list):
                 raise ValueError(f"Sequence #{i} must be a list")
 
-            parsed = []
+            parsed: list[int] = []
             for j, x in enumerate(seq):
                 if x not in (0, 1, 2, 3, 4):
                     raise ValueError(

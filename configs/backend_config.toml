@@ -2,22 +2,22 @@
 seed = 42
 
 [sizes]
-n_qubits = 1
+n_qubits = 2
 d_hilbert_1q = 2
 d_hilbert_2q = 4
 
 [noise]
-p_depol = 0.09
-p_ampl_damp = 0.085
-p_phase_damp = 0.065
-d_theta = 0.087
-d_phi = 0.08
-d_delta = 0.075
+p_depol = 0
+p_ampl_damp = 0
+p_phase_damp = 0
+d_theta = 0
+d_phi = 0
+d_delta = 0
 
 [spam]
-prep_err = 0.07
-meas_01_err = 0.05
-meas_10_err = 0.1
+prep_err = 0
+meas_01_err = 0
+meas_10_err = 0
 
 [dtype]
 complex = "cdouble"
